@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>🔐 Encrypted Image Gallery</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gallery.css') }}">
+</head>
+<body data-page="{{ page }}" data-page-size="{{ page_size }}">
+    <div class="header">
+        <a href="/logout" class="logout-btn">🔒 Logout</a>
+        <label class="upload-btn" id="uploadBtn">
+            📦 Upload ZIP
+            <input type="file" id="uploadInput" accept=".zip,application/zip" hidden>
+        </label>
+        <h1>🔐 Encrypted Image Gallery</h1>
+        <p class="image-count">{{ total_count }} encrypted image{{ 's' if total_count != 1 else '' }} found · Page {{ page }} of {{ total_pages }}</p>
+    </div>
+
+    <div class="upload-status" id="uploadStatus"></div>
+
+    <div class="security-notice">
+        📱 <strong>Mobile Optimized</strong> - Images are auto-optimized for mobile. Click download button to view original quality.
+    </div>
+
+    {% macro pagination_nav() %}
+    <div class="pagination">
+        {% if has_prev %}
+            <a href="/?page=1" title="First page">« First</a>
+            <a href="/?page={{ page - 1 }}">‹ Prev</a>
+        {% else %}
+            <span class="disabled">« First</span>
+            <span class="disabled">‹ Prev</span>
+        {% endif %}
+        <form class="page-jump" action="/" method="get">
+            <label>Page
+                <input type="number" name="page" value="{{ page }}" min="1" max="{{ total_pages }}" required>
+            </label>
+            <span class="page-total">of {{ total_pages }}</span>
+            <button type="submit">Go</button>
+        </form>
+        {% if has_next %}
+            <a href="/?page={{ page + 1 }}">Next ›</a>
+            <a href="/?page={{ total_pages }}" title="Last page">Last »</a>
+        {% else %}
+            <span class="disabled">Next ›</span>
+            <span class="disabled">Last »</span>
+        {% endif %}
+    </div>
+    {% endmacro %}
+
+    {% if images %}
+        {{ pagination_nav() }}
+
+        <div class="gallery">
+            {% for image in images %}
+                <div class="image-tile" onclick="openModal('{{ image }}')">
+                    <div class="encrypted-badge">🔐</div>
+                    <div class="sprite-thumb-container">
+                        <div class="sprite-thumb" data-filename="{{ image }}"></div>
+                    </div>
+                    <div class="image-name">{{ image.replace('.gpg', '') }}</div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {{ pagination_nav() }}
+    {% else %}
+        <div class="no-images">
+            <h2>No Encrypted Images Found</h2>
+            <p>Please add some GPG-encrypted image files (*.jpg.gpg, *.png.gpg, etc.) to the directory and refresh.</p>
+        </div>
+    {% endif %}
+
+    <div id="imageModal" class="modal" onclick="closeModal()">
+        <span class="close">&times;</span>
+        <div class="modal-counter" id="modalCounter">1 / 1</div>
+        <a id="downloadBtn" class="download-btn" href="#" target="_blank" onclick="event.stopPropagation()">
+            ⬇️ Download Original
+        </a>
+        <button class="modal-nav prev" id="prevBtn" onclick="event.stopPropagation(); navigateImage(-1)">‹</button>
+        <button class="modal-nav next" id="nextBtn" onclick="event.stopPropagation(); navigateImage(1)">›</button>
+        <div class="modal-content">
+            <div class="loading-spinner" id="modalSpinner"></div>
+            <img id="modalImage" src="" alt="" style="display: none;">
+        </div>
+        <div class="modal-filename" id="modalFilename"></div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/gallery.js') }}"></script>
+</body>
+</html>

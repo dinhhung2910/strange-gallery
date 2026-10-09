@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 Encrypted Image Gallery - Authentication</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="lock-icon">🔐</div>
+        <h1>Encrypted Image Gallery</h1>
+        <p class="subtitle">Enter your decryption key to access encrypted images</p>
+
+        <form id="authForm">
+            <div class="form-group">
+                <label for="passphrase">Decryption Key:</label>
+                <input type="password" id="passphrase" name="passphrase" required
+                       placeholder="Enter your GPG passphrase" autocomplete="current-password">
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                🔓 Unlock Gallery
+            </button>
+        </form>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Validating decryption key...</p>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+
+        <div class="info-box">
+            <h3>📱 Mobile Optimized:</h3>
+            <ul>
+                <li>Auto-generates mobile-friendly image samples</li>
+                <li>Download button to view original quality</li>
+                <li>All images stored encrypted with GPG</li>
+                <li>Session expires after 1 hour for security</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+</body>
+</html>
